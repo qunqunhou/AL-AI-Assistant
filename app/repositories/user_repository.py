@@ -16,7 +16,7 @@ def create_user(username,password):
             password
         )
         VALUES
-        (?,?)
+        (%s,%s)
         ''',
         (
             username,
@@ -30,6 +30,7 @@ def create_user(username,password):
 
     user_id=cursor.lastrowid
 
+    cursor.close()
     conn.close()
 
 
@@ -47,7 +48,7 @@ def get_user_by_username(username):
         '''
         SELECT id,username,password
         FROM users
-        WHERE username=?
+        WHERE username=%s
         ''',
         (username,)
     )
@@ -55,7 +56,7 @@ def get_user_by_username(username):
 
     user=cursor.fetchone()
 
-
+    cursor.close()
     conn.close()
 
 
@@ -74,13 +75,14 @@ def get_user_by_id(user_id):
         '''
         SELECT id,username
         FROM users
-        WHERE id=?
+        WHERE id=%s
         ''',
         (user_id,)
     )
 
     user=cursor.fetchone()
 
+    cursor.close()
     conn.close()
 
     return user

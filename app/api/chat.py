@@ -25,7 +25,7 @@ def chat_api(request: ChatRequest,user_id=Depends(get_current_user)):
 
 
 @router.post('/chat/stream')
-def chat_stream(request: ChatRequest,user_id=Depends(get_current_user)):
+def chat_stream_api(request: ChatRequest,user_id=Depends(get_current_user)):
     
 
 

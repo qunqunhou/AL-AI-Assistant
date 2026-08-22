@@ -1,11 +1,25 @@
-import sqlite3
+
+import mysql.connector
+
+from app.core.config import (
+    DB_HOST,
+    DB_NAME,
+    DB_PASSWORD,
+    DB_PORT,
+    DB_USER
+)
 
 
-DB = "ai_chat.db"
 
 
 def get_connection():
-    return sqlite3.connect(DB)
+    return mysql.connector.connect(
+        host=DB_HOST,
+        port=DB_PORT,
+        database=DB_NAME,
+        user=DB_USER,
+        password=DB_PASSWORD
+    )
 
 
 
@@ -16,29 +30,34 @@ def init_db():
     cursor = conn.cursor()
 
 
-    cursor.executescript(
+    cursor.execute(
         """
 
         CREATE TABLE IF NOT EXISTS users(
 
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id INTEGER PRIMARY KEY AUTO_INCREMENT,
 
-            username TEXT NOT NULL UNIQUE,
+            username VARCHAR(255) NOT NULL UNIQUE,
 
-            password TEXT NOT NULL,
+            password VARCHAR(255) NOT NULL,
 
             create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 
-        );
+        )
 
+        """
+    )
+
+    cursor.execute(
+        """
 
         CREATE TABLE IF NOT EXISTS messages(
 
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id INTEGER PRIMARY KEY AUTO_INCREMENT,
 
             user_id INTEGER NOT NULL,
 
-            role TEXT NOT NULL,
+            role VARCHAR(255) NOT NULL,
 
             content TEXT NOT NULL,
 
@@ -47,12 +66,12 @@ def init_db():
             FOREIGN KEY(user_id)
             REFERENCES users(id)
 
-        );
-
+        )
         """
     )
 
 
     conn.commit()
 
+    cursor.close()
     conn.close()

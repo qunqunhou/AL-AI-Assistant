@@ -36,7 +36,7 @@ def chat(user_id:int,message:str):
 
     return answer
 
-def chat_stream(user_id:int,message:srt):
+def chat_stream(user_id:int,message:str):
 
     add_message(
         user_id,

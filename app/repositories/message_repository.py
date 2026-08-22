@@ -8,7 +8,7 @@ def get_history(user_id):
         '''
         SELECT role,content
         FROM messages
-        WHERE user_id=?
+        WHERE user_id=%s
         ORDER BY id
         ''',
         (user_id,)
@@ -16,6 +16,7 @@ def get_history(user_id):
 
     rows=cursor.fetchall()
 
+    cursor.close()
     conn.close()
 
     history=[]
@@ -46,7 +47,7 @@ def add_message(user_id,role,content):
         )
 
         VALUES
-        (?,?,?)
+        (%s,%s,%s)
         ''',
         (
             user_id,
@@ -56,6 +57,8 @@ def add_message(user_id,role,content):
     )
 
     conn.commit()
+
+    cursor.close()
     conn.close()
 
 
@@ -66,12 +69,14 @@ def delete_history(user_id):
     cursor.execute(
         '''
         DELETE FROM messages
-        WHERE user_id=?
+        WHERE user_id=%s
         ''',
         (user_id,)
     )
 
     conn.commit()
+
+    cursor.close()
     conn.close()
 
 
@@ -82,7 +87,7 @@ def get_history_count(user_id):
         '''
         SELECT COUNT(*)
         FROM messages
-        WHERE user_id=?
+        WHERE user_id=%s
         ''',
         (user_id,)
     )
@@ -91,6 +96,7 @@ def get_history_count(user_id):
 
     count=cursor.fetchone()
 
+    cursor.close()
     conn.close()
 
     return count[0]/2

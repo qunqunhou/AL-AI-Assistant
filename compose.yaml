@@ -1,0 +1,42 @@
+services:
+  app:
+    image: al-ai-assistant:v1.2.3
+    container_name: al-ai-assistant
+    
+    env_file:
+      - .env
+    
+    environment:
+      DATABASE: /app/data/ai_chat.db
+    
+    ports:
+      - "9999:8000"
+    
+    depends_on:
+      - mysql
+    
+    volumes:
+      - al-ai-data:/app/data
+  
+  mysql:
+    image: mysql:8.4
+    container_name: al-ai-mysql
+    
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: al_ai
+      MYSQL_USER: ai_user
+      MYSQL_PASSWORD: ai_password
+    
+    
+    
+    volumes:
+      - al-ai-mysql-data:/var/lib/mysql
+
+volumes:
+  
+  al-ai-data:
+    external: true
+  
+  al-ai-mysql-data:
+    driver: local
