@@ -1,6 +1,6 @@
 services:
   app:
-    image: al-ai-assistant:v1.2.3
+    image: al-ai-assistant:v1.3.2
     container_name: al-ai-assistant
     
     env_file:
@@ -13,7 +13,11 @@ services:
       - "9999:8000"
     
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
+
+      redis:
+        condition: service_healthy
     
     volumes:
       - al-ai-data:/app/data
@@ -29,9 +33,43 @@ services:
       MYSQL_PASSWORD: ai_password
     
     
-    
     volumes:
       - al-ai-mysql-data:/var/lib/mysql
+
+    healthcheck:
+      test: [
+        "CMD", 
+        "mysqladmin",
+        "ping",
+        "-h",
+        "localhost",
+        "-uai_user",
+        "-pai_password"
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  redis:
+    image: redis:7-alpine
+    container_name: al-ai-redis
+
+    command: redis-server --appendonly yes
+
+    volumes:
+      - al-ai-redis-data:/data
+
+    healthcheck:
+      test: [
+        "CMD",
+         "redis-cli",
+         "ping"
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
 
 volumes:
   
@@ -40,3 +78,5 @@ volumes:
   
   al-ai-mysql-data:
     driver: local
+
+  al-ai-redis-data:

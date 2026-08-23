@@ -1,5 +1,5 @@
 from app.core.database import init_db
-
+from app.core.middleware import request_logging_middleware
 
 from fastapi import FastAPI
 
@@ -20,3 +20,6 @@ app.include_router(chat.router)
 app.include_router(history.router)
 
 
+app.middleware("http")(
+    request_logging_middleware
+)

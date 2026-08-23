@@ -7,5 +7,4 @@ __pycache__/
 *.db
 logs/
 README.md
-test_mysql.py
-test_logger.py
+migrate_sqlite_to_mysql.py
