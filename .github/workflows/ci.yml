@@ -45,3 +45,10 @@ jobs:
             - name: Run tests
               run: |
                 pytest
+
+
+
+            - name: Build Docker images
+              run: |
+                docker build \
+                  -t al-ai-assistant:test .
