@@ -65,7 +65,7 @@ jobs:
             - name: Login ACR
               uses: docker/login-action@v3
               with:
-                registry: registry.cn-hangzhou.aliyuncs.com
+                registry: crpi-npa4w6l8amsghlzs.cn-hangzhou.personal.cr.aliyuncs.com
                 username: ${{ secrets.ACR_USERNAME }}
                 password: ${{ secrets.ACR_PASSWORD }}
 
@@ -75,7 +75,7 @@ jobs:
               run: |
                 docker build \
                   -t ghcr.io/${{ github.repository_owner }}/al-ai-assistant:latest \
-                  -t registry.cn-hangzhou.aliyuncs.com/smzhiman/al-ai-assistant:latest \
+                  -t crpi-npa4w6l8amsghlzs.cn-hangzhou.personal.cr.aliyuncs.com/smzhiman/al-ai-assistant:latest \
                   .
 
 
@@ -90,4 +90,4 @@ jobs:
             - name: Push ACR
               run: |
                 docker push \
-                registry.cn-hangzhou.aliyuncs.com/smzhiman/al-ai-assistant:latest
+                crpi-npa4w6l8amsghlzs.cn-hangzhou.personal.cr.aliyuncs.com/smzhiman/al-ai-assistant:latest
