@@ -91,3 +91,25 @@ jobs:
               run: |
                 docker push \
                 crpi-npa4w6l8amsghlzs.cn-hangzhou.personal.cr.aliyuncs.com/smzhiman/al-ai-assistant:latest
+
+
+    deploy:
+
+        needs: test
+
+        runs-on: ubuntu-latest
+
+        steps:
+
+
+            - name: Deploy ECS
+              uses: appleboy/ssh-action@v1.2.0
+              with:
+                host: ${{ secrets.ECS_HOST }}
+                username: ${{ secrets.ECS_USER }}
+                key: ${{ secrets.ECS_SSH_KEY }}
+                script: |
+                  cd ~/apps/al-ai-assistant
+                  sudo docker compose pull
+                  sudo docker compose up -d
+                  
