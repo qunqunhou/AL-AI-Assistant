@@ -1,4 +1,4 @@
-name: AL-AI-Assistant CI
+name: AL-AI-Assistant CI/CD
 
 
 
@@ -7,6 +7,9 @@ on:
     push:
         branches:
             - main
+            
+        tags:
+          - "v*"
 
     pull_request:
         branches:
@@ -29,7 +32,7 @@ jobs:
         steps:
 
 
-            - name: Checkout code
+            - name: Checkout
               uses: actions/checkout@v4
 
 
@@ -51,6 +54,25 @@ jobs:
               run: |
                 pytest
 
+    build-and-push:
+
+       needs: test
+
+       if: startsWith(github.ref,'refs/tags/v')
+
+       runs-on: ubuntu-latest
+
+       permissions:
+        contents: read
+        packages: write
+
+
+       steps:
+
+
+            - name: Checkout
+              uses: actions/checkout@v4
+
 
             
             - name: Login GHCR
@@ -71,11 +93,18 @@ jobs:
 
 
 
+            - name: Extract version
+              id: version
+              run: |
+                echo "version=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+
+
+
             - name: Build Docker images
               run: |
                 docker build \
-                  -t ghcr.io/${{ github.repository_owner }}/al-ai-assistant:latest \
-                  -t crpi-npa4w6l8amsghlzs.cn-hangzhou.personal.cr.aliyuncs.com/smzhiman/al-ai-assistant:latest \
+                  -t ghcr.io/${{ github.repository_owner }}/al-ai-assistant:${{ steps.version.outputs.version }} \
+                  -t crpi-npa4w6l8amsghlzs.cn-hangzhou.personal.cr.aliyuncs.com/smzhiman/al-ai-assistant:${{ steps.version.outputs.version }} \
                   .
 
 
@@ -83,19 +112,21 @@ jobs:
             - name: Push GHCR
               run: |
                 docker push \
-                  ghcr.io/${{ github.repository_owner }}/al-ai-assistant:latest
+                  ghcr.io/${{ github.repository_owner }}/al-ai-assistant:${{ steps.version.outputs.version }}
 
 
 
             - name: Push ACR
               run: |
                 docker push \
-                crpi-npa4w6l8amsghlzs.cn-hangzhou.personal.cr.aliyuncs.com/smzhiman/al-ai-assistant:latest
+                crpi-npa4w6l8amsghlzs.cn-hangzhou.personal.cr.aliyuncs.com/smzhiman/al-ai-assistant:${{ steps.version.outputs.version }}
 
 
     deploy:
 
-        needs: test
+        needs: build-and-push
+
+        if: startsWith(github.ref,'refs/tags/v')
 
         runs-on: ubuntu-latest
 
@@ -110,6 +141,8 @@ jobs:
                 key: ${{ secrets.ECS_SSH_KEY }}
                 script: |
                   cd ~/apps/al-ai-assistant
+                  export IMAGE_TAG=${GITHUB_REF_NAME}
+                  sed -i "s|image:.*al-ai-assistant:.*|image: crpi-npa4w6l8amsghlzs.cn-hangzhou.personal.cr.aliyuncs.com/smzhiman/al-ai-assistant:${IMAGE_TAG}|" compose.yaml
                   docker compose pull
                   docker compose up -d
                   
