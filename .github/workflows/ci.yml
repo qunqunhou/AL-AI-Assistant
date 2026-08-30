@@ -135,13 +135,18 @@ jobs:
 
             - name: Deploy ECS
               uses: appleboy/ssh-action@v1.2.0
+              env:
+                IMAGE_TAG: ${{ github.ref_name }}
               with:
                 host: ${{ secrets.ECS_HOST }}
                 username: ${{ secrets.ECS_USER }}
                 key: ${{ secrets.ECS_SSH_KEY }}
+                envs: IMAGE_TAG
                 script: |
+                  set -e
                   cd ~/apps/al-ai-assistant
-                  export IMAGE_TAG=${GITHUB_REF_NAME}
+                  echo "Deploying version: $IMAGE_TAG"
                   docker compose pull
                   docker compose up -d
+                  docker compose ps
                   
