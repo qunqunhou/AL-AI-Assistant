@@ -142,7 +142,6 @@ jobs:
                 script: |
                   cd ~/apps/al-ai-assistant
                   export IMAGE_TAG=${GITHUB_REF_NAME}
-                  sed -i "s|image:.*al-ai-assistant:.*|image: crpi-npa4w6l8amsghlzs.cn-hangzhou.personal.cr.aliyuncs.com/smzhiman/al-ai-assistant:${IMAGE_TAG}|" compose.yaml
                   docker compose pull
                   docker compose up -d
                   
