@@ -15,6 +15,11 @@ app.add_exception_handler(BusinessException,business_exception_handler)
 init_db()
 
 
+@app.get("/health")
+def health_check():
+    return {"status":"ok"}
+
+
 app.include_router(auth.router)
 app.include_router(chat.router)
 app.include_router(history.router)
