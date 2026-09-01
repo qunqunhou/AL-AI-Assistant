@@ -2,6 +2,7 @@ from app.core.database import init_db
 from app.core.middleware import request_logging_middleware
 
 from fastapi import FastAPI
+from prometheus_fastapi_instrumentator import Instrumentator
 
 from app.core.exception import BusinessException
 from app.core.exception_handler import business_exception_handler
@@ -19,6 +20,8 @@ init_db()
 def health_check():
     return {"status":"ok"}
 
+
+Instrumentator().instrument(app).expose(app)
 
 app.include_router(auth.router)
 app.include_router(chat.router)

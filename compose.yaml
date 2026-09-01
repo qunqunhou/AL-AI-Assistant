@@ -1,6 +1,6 @@
 services:
   app:
-    image: al-ai-assistant:v1.3.2
+    image: al-ai-assistant:v1.4.0
     container_name: al-ai-assistant
     
     env_file:
@@ -25,10 +25,10 @@ services:
     container_name: al-ai-mysql
     
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: al_ai
-      MYSQL_USER: ai_user
-      MYSQL_PASSWORD: ai_password
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
     
     
     volumes:
@@ -41,8 +41,8 @@ services:
         "ping",
         "-h",
         "localhost",
-        "-uai_user",
-        "-pai_password"
+        "-u${DB_USER}",
+        "-p${DB_PASSWORD}"
         ]
       interval: 5s
       timeout: 5s
